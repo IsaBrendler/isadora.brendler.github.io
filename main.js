@@ -1,9 +1,8 @@
-/* Drag and drop ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â positions relative to viewport */
+/* Drag and drop — positions relative to viewport */
 const canvas = document.getElementById("canvas");
 let zTop = 10;
 let activeDrag = null;
 
-/* Clock dial 10:00 ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬â„¢ 2:00 (12 = 0Ãƒâ€šÃ‚Â°, each minute = 0.5Ãƒâ€šÃ‚Â°) ÃƒÂ¢Ã¢â‚¬ Ã¢â‚¬â„¢ -60Ãƒâ€šÃ‚Â° to +60Ãƒâ€šÃ‚Â° */
 const ROTATION_MIN = -60;
 const ROTATION_MAX = 60;
 const CLOCK_SPAN_MINUTES = 4 * 60;
@@ -27,8 +26,6 @@ function applyRotation(item, deg) {
   const rounded = Math.round(clampRotation(deg) * 2) / 2;
   item.style.setProperty("--rotate", `${rounded}deg`);
 }
-
-const ROTATION_CLOCK_KEY = "canvas-rotation-clock-10-2";
 
 function initRotations() {
   document.querySelectorAll(".draggable").forEach((item) => {
@@ -91,7 +88,6 @@ function getSafeBounds(item) {
 
   if (sidebar) {
     const sidebarOnLeft = sidebar.width < vw * 0.55;
-
     if (sidebarOnLeft) {
       minX = Math.max(minX, sidebar.right + SAFE_MARGIN);
     } else {
@@ -115,7 +111,6 @@ function randomPositionOutsideSidebar(item) {
 }
 
 function layoutMobileColumn() {
-  // CSS handles all layout. Just clear any inline positions set by desktop.
   document.querySelectorAll(".draggable").forEach((item) => {
     item.style.left = "";
     item.style.top = "";
@@ -136,7 +131,25 @@ function relocateIfOverSidebar(item) {
   return true;
 }
 
+function navigateTo(href) {
+  if (!href) return;
+  if (href.startsWith("http")) {
+    window.open(href, "_blank");
+  } else {
+    window.location.href = href;
+  }
+}
+
 document.querySelectorAll(".draggable").forEach((item) => {
+  // Mobile: simple click to navigate
+  if (isMobile()) {
+    item.addEventListener("click", () => {
+      navigateTo(item.dataset.href);
+    });
+    return;
+  }
+
+  // Desktop: full drag + click logic
   let offsetX = 0;
   let offsetY = 0;
   let startX = 0;
@@ -145,7 +158,6 @@ document.querySelectorAll(".draggable").forEach((item) => {
 
   item.addEventListener("pointerdown", (e) => {
     if (e.button !== 0) return;
-    if (isMobile()) return;
     activeDrag = item;
     isDragging = false;
     startX = e.clientX;
@@ -159,7 +171,6 @@ document.querySelectorAll(".draggable").forEach((item) => {
 
   item.addEventListener("pointermove", (e) => {
     if (activeDrag !== item) return;
-    if (isMobile()) return;
 
     const dx = e.clientX - startX;
     const dy = e.clientY - startY;
@@ -184,14 +195,7 @@ document.querySelectorAll(".draggable").forEach((item) => {
       relocateIfOverSidebar(item);
       savePositions();
     } else {
-      const href = item.dataset.href;
-      if (href) {
-        if (href.startsWith("http")) {
-          window.open(href, "_blank");
-        } else {
-          window.location.href = href;
-        }
-      }
+      navigateTo(item.dataset.href);
     }
 
     activeDrag = null;
@@ -228,7 +232,6 @@ window.addEventListener("resize", () => {
   if (mobile) {
     layoutMobileColumn();
   } else {
-    // Reset inline coordinates to let default % coordinates adjust
     document.querySelectorAll(".draggable").forEach((item) => {
       item.style.left = "";
       item.style.top = "";
