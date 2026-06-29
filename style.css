@@ -1,4 +1,4 @@
-/* Isadora portfolio Ã¢â‚¬â€ full-screen canvas, fixed UI overlay */
+/* Isadora portfolio ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â full-screen canvas, fixed UI overlay */
 
 *,
 *::before,
@@ -71,7 +71,7 @@ button {
   overflow: hidden;
 }
 
-/* ===== FIXED UI (no panel Ã¢â‚¬â€ text & photo float over canvas) ===== */
+/* ===== FIXED UI (no panel ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â text & photo float over canvas) ===== */
 .sidebar {
   position: fixed;
   top: 0;
@@ -272,7 +272,7 @@ button {
   pointer-events: none;
 }
 
-/* Sizes Ã¢â‚¬â€ each project has its own scale */
+/* Sizes ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â each project has its own scale */
 .draggable--archive {
   width: 300px;
   height: 190px;
@@ -409,12 +409,13 @@ button {
   transform: translateX(-50%) translateY(0);
 }
 
-/* ===== MOBILE Ã¢â‚¬â€ horizontal carousel ===== */
+/* ===== MOBILE â€” vertical single column ===== */
 @media (max-width: 768px) {
   html,
   body {
-    overflow: hidden;
-    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: auto;
   }
 
   body {
@@ -461,74 +462,48 @@ button {
     font-size: 0.95rem;
   }
 
-  /* Canvas becomes the horizontal carousel track */
+  /* Canvas: simple vertical flow */
   .canvas {
     position: relative;
-    flex: 1;
     width: 100%;
     inset: auto;
-    overflow-x: scroll;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    overflow: visible;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0;
-    padding-bottom: 20px;
+    gap: 32px;
+    padding: 24px 20px 48px;
   }
 
-  .canvas::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Each draggable becomes a full-width snap slide */
+  /* Each project: full-width card */
   .draggable {
     position: relative !important;
     left: auto !important;
     top: auto !important;
-    flex: 0 0 85vw;
-    width: 85vw !important;
+    width: 100% !important;
     height: auto !important;
-    min-height: 50vw;
     transform: none !important;
-    scroll-snap-align: center;
+    touch-action: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 16px;
-    margin: 0 7.5vw;
-    touch-action: pan-x;
   }
 
-  /* First and last item get extra margin so they center properly */
-  .draggable:first-child {
-    margin-left: calc(7.5vw);
-    scroll-snap-align: center;
-  }
-
-  .draggable:last-child {
-    margin-right: calc(7.5vw);
-  }
-
-  .draggable__img {
-    width: auto;
-    max-width: 100%;
-    max-height: 44vw;
-    height: auto;
-    object-fit: contain;
-  }
-
-  /* Override individual sizes on mobile */
   .draggable--archive,
   .draggable--daru,
   .draggable--bilou,
   .draggable--talq,
   .draggable--numo,
   .draggable--wwdc24 {
-    width: 85vw !important;
+    width: 100% !important;
     height: auto !important;
+  }
+
+  .draggable__img {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    object-fit: contain;
   }
 
   .project-note {
@@ -536,7 +511,7 @@ button {
     top: auto;
     left: auto;
     transform: none !important;
-    margin-top: 16px;
+    margin-top: 12px;
     max-width: 100%;
     text-align: center;
     clip-path: none;
@@ -556,31 +531,9 @@ button {
     margin-top: 4px;
   }
 
-  /* Scroll hint dots */
-  .carousel-dots {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    padding: 8px 0 12px;
-    flex-shrink: 0;
+  .draggable.is-dimmed {
+    display: none;
   }
-
-  .carousel-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--border);
-    transition: background 0.2s;
-  }
-
-  .carousel-dot.is-active {
-    background: var(--text);
-  }
-}
-
-/* Hide dots on desktop */
-.carousel-dots {
-  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
