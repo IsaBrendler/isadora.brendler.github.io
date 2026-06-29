@@ -1,9 +1,9 @@
-/* Drag and drop â€” positions relative to viewport */
+/* Drag and drop Ã¢â‚¬â€ positions relative to viewport */
 const canvas = document.getElementById("canvas");
 let zTop = 10;
 let activeDrag = null;
 
-/* Clock dial 10:00 â†’ 2:00 (12 = 0Â°, each minute = 0.5Â°) â†’ -60Â° to +60Â° */
+/* Clock dial 10:00 Ã¢â€ â€™ 2:00 (12 = 0Ã‚Â°, each minute = 0.5Ã‚Â°) Ã¢â€ â€™ -60Ã‚Â° to +60Ã‚Â° */
 const ROTATION_MIN = -60;
 const ROTATION_MAX = 60;
 const CLOCK_SPAN_MINUTES = 4 * 60;
@@ -254,7 +254,18 @@ document.querySelectorAll(".nav__link").forEach((link) => {
       const categories = (item.dataset.category || "").split(" ");
       const match = filter === "all" || categories.includes(filter);
       item.classList.toggle("is-dimmed", !match);
+
+      // On mobile: actually hide/show so carousel only shows matching items
+      if (isMobile()) {
+        item.style.display = match ? "" : "none";
+      }
     });
+
+    // Rebuild dots after filter changes
+    if (isMobile()) {
+      rebuildCarouselDots();
+      canvas.scrollLeft = 0;
+    }
   });
 });
 
@@ -286,8 +297,14 @@ window.addEventListener("load", () => {
 /* ===== CAROUSEL DOTS ===== */
 function initCarouselDots() {
   if (!isMobile()) return;
+  rebuildCarouselDots();
 
-  // Create dots container if not already present
+  canvas.addEventListener("scroll", () => {
+    updateCarouselDots();
+  }, { passive: true });
+}
+
+function rebuildCarouselDots() {
   let dotsEl = document.querySelector(".carousel-dots");
   if (!dotsEl) {
     dotsEl = document.createElement("div");
@@ -295,14 +312,10 @@ function initCarouselDots() {
     document.body.appendChild(dotsEl);
   }
 
-  const items = [...document.querySelectorAll(".draggable:not(.is-dimmed)")];
+  const items = [...document.querySelectorAll(".draggable:not([style*='display: none'])")];
   dotsEl.innerHTML = items.map((_, i) =>
     `<div class="carousel-dot${i === 0 ? " is-active" : ""}"></div>`
   ).join("");
-
-  canvas.addEventListener("scroll", () => {
-    updateCarouselDots();
-  }, { passive: true });
 }
 
 function updateCarouselDots() {
@@ -310,7 +323,7 @@ function updateCarouselDots() {
   const dotsEl = document.querySelector(".carousel-dots");
   if (!dotsEl) return;
 
-  const items = [...document.querySelectorAll(".draggable:not(.is-dimmed)")];
+  const items = [...document.querySelectorAll(".draggable:not([style*='display: none'])")];
   const dots = [...dotsEl.querySelectorAll(".carousel-dot")];
   const canvasCenter = canvas.scrollLeft + canvas.clientWidth / 2;
 
