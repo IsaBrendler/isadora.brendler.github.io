@@ -1,4 +1,4 @@
-/* Isadora portfolio — full-screen canvas, fixed UI overlay */
+/* Isadora portfolio â€” full-screen canvas, fixed UI overlay */
 
 *,
 *::before,
@@ -71,7 +71,7 @@ button {
   overflow: hidden;
 }
 
-/* ===== FIXED UI (no panel — text & photo float over canvas) ===== */
+/* ===== FIXED UI (no panel â€” text & photo float over canvas) ===== */
 .sidebar {
   position: fixed;
   top: 0;
@@ -272,7 +272,7 @@ button {
   pointer-events: none;
 }
 
-/* Sizes — each project has its own scale */
+/* Sizes â€” each project has its own scale */
 .draggable--archive {
   width: 300px;
   height: 190px;
@@ -409,12 +409,12 @@ button {
   transform: translateX(-50%) translateY(0);
 }
 
-/* ===== MOBILE ===== */
+/* ===== MOBILE â€” horizontal carousel ===== */
 @media (max-width: 768px) {
   html,
   body {
-    overflow: auto;
-    height: auto;
+    overflow: hidden;
+    height: 100%;
   }
 
   body {
@@ -426,32 +426,164 @@ button {
     position: relative;
     order: -1;
     width: 100%;
+    flex-shrink: 0;
+    padding: clamp(24px, 4vh, 36px) clamp(20px, 5vw, 32px) 16px;
     pointer-events: none;
+    overflow-y: visible;
   }
 
+  .sidebar a,
+  .sidebar button {
+    pointer-events: auto;
+  }
+
+  .sidebar__photo {
+    display: none;
+  }
+
+  .sidebar__bio {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
+
+  .sidebar__more {
+    margin-bottom: 16px;
+  }
+
+  .sidebar__extra {
+    margin-bottom: 12px;
+  }
+
+  .sidebar__nav {
+    margin-top: 16px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+  }
+
+  .nav__link {
+    font-size: 0.95rem;
+  }
+
+  /* Canvas becomes the horizontal carousel track */
   .canvas {
     position: relative;
     flex: 1;
     width: 100%;
-    min-height: 60vh;
     inset: auto;
-    overflow: visible;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding-bottom: 20px;
   }
 
-  .sidebar__nav {
-    margin-top: 32px;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 12px 20px;
+  .canvas::-webkit-scrollbar {
+    display: none;
   }
 
-  .nav__link {
-    font-size: 1rem;
-  }
-
+  /* Each draggable becomes a full-width snap slide */
   .draggable {
-    scale: 0.82;
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    flex: 0 0 85vw;
+    width: 85vw !important;
+    height: auto !important;
+    min-height: 50vw;
+    transform: none !important;
+    scroll-snap-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    margin: 0 7.5vw;
   }
+
+  /* First and last item get extra margin so they center properly */
+  .draggable:first-child {
+    margin-left: calc(7.5vw);
+    scroll-snap-align: center;
+  }
+
+  .draggable:last-child {
+    margin-right: calc(7.5vw);
+  }
+
+  .draggable__img {
+    width: auto;
+    max-width: 100%;
+    max-height: 44vw;
+    height: auto;
+    object-fit: contain;
+  }
+
+  /* Override individual sizes on mobile */
+  .draggable--archive,
+  .draggable--daru,
+  .draggable--bilou,
+  .draggable--talq,
+  .draggable--numo,
+  .draggable--wwdc24 {
+    width: 85vw !important;
+    height: auto !important;
+  }
+
+  .project-note {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none !important;
+    margin-top: 16px;
+    max-width: 100%;
+    text-align: center;
+    clip-path: none;
+    box-shadow: none;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .project-note__title {
+    font-size: 0.85rem;
+  }
+
+  .project-note__desc {
+    max-height: 30px;
+    opacity: 1;
+    margin-top: 4px;
+  }
+
+  /* Scroll hint dots */
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 0 12px;
+    flex-shrink: 0;
+  }
+
+  .carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.2s;
+  }
+
+  .carousel-dot.is-active {
+    background: var(--text);
+  }
+}
+
+/* Hide dots on desktop */
+.carousel-dots {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -460,5 +592,3 @@ button {
     transition: none !important;
   }
 }
-
-
